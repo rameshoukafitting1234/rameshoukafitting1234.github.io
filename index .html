@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>جرد معمل الكابلات</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f4ef;--card:#fff;--tx:#1c1b19;--mu:#6b675f;--ac:#b8651b;--ln:#e3dfd5;--rd:#c0392b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17150f;--card:#221f17;--tx:#f1ede2;--mu:#a39d8e;--ac:#e08a3c;--ln:#38332a;--rd:#ff7b6b}}
+:root[data-theme="dark"]{--bg:#17150f;--card:#221f17;--tx:#f1ede2;--mu:#a39d8e;--ac:#e08a3c;--ln:#38332a;--rd:#ff7b6b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic",Arial,sans-serif;line-height:1.6}
+.w{max-width:960px;margin:auto;padding:14px}
+h1{margin:6px 0;font-size:1.6rem}h2{margin:26px 0 8px;font-size:1.2rem;color:var(--ac)}
+.g{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.c{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:12px}
+.c h3{margin:0 0 4px;font-size:.9rem;color:var(--mu);font-weight:600}.big{font-size:1.4rem;font-weight:700}
+label{font-size:.82rem;color:var(--mu);display:block}
+input{width:100%;padding:7px;border:1px solid var(--ln);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+.sc{overflow-x:auto}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--ln);min-width:560px}
+th,td{padding:6px 8px;border-bottom:1px solid var(--ln);text-align:right;font-size:.9rem}
+th{color:var(--mu);font-weight:600}td input{width:105px}
+button{font:inherit;padding:7px 13px;border-radius:8px;border:1px solid var(--ac);background:var(--card);color:var(--ac);cursor:pointer}
+button.p{background:var(--ac);color:#fff}button.x{border-color:var(--rd);color:var(--rd);padding:3px 9px}
+.add{display:flex;gap:6px;margin:6px 0}.add input{max-width:260px}
+.mv{display:flex;gap:4px;margin-top:5px}.mv .dl{width:70px}.mv button{padding:3px 8px;font-size:.8rem}
+.ro .mv,.ro #secs .add,.ro [data-d],.ro #zero,.ro #hsave,.ro [data-L],.ro [data-H],.ro #rb{display:none}
+#bd{font-size:.85rem;color:var(--mu);margin:0 0 6px}
+.note{font-size:.8rem;color:var(--mu)}
+.bar{height:8px;background:var(--ln);border-radius:5px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--ac)}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>🔌 جرد معمل الكابلات والأسلاك</h1>
+<p id="bd"></p>
+<div id="lock" class="add" style="display: flex;"><input id="pin" type="password" placeholder="رمز التعديل" style="max-width:170px"><button id="unl">🔒 دخول وضع التعديل</button></div>
+<div id="pubbar" class="add" style="display: none; align-items: center;"><button class="p" id="pub">⬇ تنزيل النسخة المحدّثة</button><button id="chp">تغيير الرمز</button><button id="out">خروج</button><span id="pubst" class="note"></span></div>
+
+<h2>أسعار اليوم</h2>
+<div class="g">
+<div class="c"><label>سعر الدولار (ليرة جديدة)</label><input id="rate" type="text" inputmode="decimal" step="0.01">
+<div id="rb" style="display:flex;gap:6px;margin-top:6px"><button id="r1">موازي 138.50</button><button id="r2">مركزي 122.50</button></div>
+<p class="note">بتاريخ 5 أكتوبر 2026</p></div>
+<div class="c"><label>سعر النحاس اليوم ($ لكل كغ)</label><input id="cu" type="text" inputmode="decimal" step="0.01">
+<p class="note">بورصة لندن 5 أكتوبر 2026: نحو 14,358 $ للطن = 14.36 $/كغ</p></div>
+<div class="c"><label>وزن كيس البلاستيك (كغ)</label><input id="bag" type="text" inputmode="decimal"><p class="note">ثابت 25 كغ</p></div>
+</div>
+
+<h2>الإحصائيات</h2>
+<div class="g" id="st"></div>
+<div class="g" id="sh" style="margin-top:10px"></div>
+
+<div class="add" style="margin-top:14px"><input id="q" placeholder="🔍 بحث عن صنف أو قياس"></div>
+<div id="secs">جارٍ تحميل الجرد…</div>
+<div id="toast" style="display:none;position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ac);color:#fff;padding:10px 16px;border-radius:10px;z-index:9;max-width:90%;text-align:center"></div>
+<div style="margin-top:12px"><button id="zero">تصفير كل الكميات (بداية جرد جديد)</button></div>
+
+<h2>الجرد السنوي المحفوظ</h2>
+<div class="add" id="hsave"><input id="yr" type="text" inputmode="decimal" style="max-width:110px"><button class="p" id="sv">حفظ جرد هذه السنة</button></div>
+<div class="sc"><table><thead><tr><th>السنة</th><th>القيمة $</th><th>القيمة ل.س</th><th>التغير عن السابق</th><th></th></tr></thead><tbody id="hs"></tbody></table></div>
+<p class="note" id="upd"></p>
+</div>
+<script type="application/json" id="state">{"bag":25,"cu":14.36,"hist":[],"items":[{"n":"نحاس كاثود","p":0,"q":0,"s":"cu"},{"n":"نحاس مسحوب","p":0,"q":0,"s":"cu"},{"n":"PVC أسود","p":0,"q":0,"s":"pl"},{"n":"PVC أحمر","p":0,"q":0,"s":"pl"},{"n":"PVC أزرق","p":0,"q":0,"s":"pl"},{"n":"PVC أصفر/أخضر","p":0,"q":0,"s":"pl"},{"g":"1.5","n":"شريط مفرد مجدول","p":0,"q":370,"s":"wr"},{"g":"2.5","n":"شريط مفرد مجدول","p":0,"q":0,"s":"wr"},{"g":"3","n":"شريط مفرد مجدول","p":0,"q":0,"s":"wr"},{"g":"4","n":"شريط مفرد مجدول","p":0,"q":0,"s":"wr"},{"g":"6","n":"شريط مفرد مجدول","p":0,"q":0,"s":"wr"},{"g":"10","n":"شريط مفرد مجدول","p":0,"q":0,"s":"wr"},{"g":"16","n":"شريط مفرد مجدول","p":0,"q":0,"s":"wr"},{"g":"0.5","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"0.75","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"1","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"1.5","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"2.5","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"3","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"4","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"6","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"10","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"16","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"25","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"35","n":"شريط مفرد شعري 27%","p":0,"q":0,"s":"wr"},{"g":"0.5","n":"شريط السحب","p":0,"q":0,"s":"wr"},{"g":"1","n":"شريط السحب","p":0,"q":0,"s":"wr"},{"g":"1.5","n":"شريط السحب","p":0,"q":0,"s":"wr"},{"g":"3","n":"شريط مفرد مجدول نظامي","p":0,"q":0,"s":"wr"},{"g":"4","n":"شريط مفرد مجدول نظامي","p":0,"q":0,"s":"wr"},{"g":"1.5","n":"شريط مفرد شعري 30%","p":0,"q":0,"s":"wr"},{"g":"2.5","n":"شريط مفرد شعري 30%","p":0,"q":0,"s":"wr"},{"g":"4","n":"شريط مفرد شعري 30%","p":0,"q":0,"s":"wr"},{"g":"6","n":"شريط مفرد شعري 30%","p":0,"q":0,"s":"wr"},{"g":"10","n":"شريط مفرد شعري 30%","p":0,"q":0,"s":"wr"},{"g":"16","n":"شريط مفرد شعري 30%","p":0,"q":0,"s":"wr"},{"g":"25","n":"شريط مفرد شعري 30%","p":0,"q":0,"s":"wr"},{"g":"35","n":"شريط مفرد شعري 30%","p":0,"q":0,"s":"wr"},{"g":"4","n":"شريط مفرد شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"6","n":"شريط مفرد شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"10","n":"شريط مفرد شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"هاتف","n":"شريط ميداني (هاتف)","p":0,"q":0,"s":"wr"},{"g":"3x6","n":"كبل مجدول 100%","p":0,"q":0,"s":"wr"},{"g":"2x10","n":"كبل مجدول 120%","p":0,"q":0,"s":"wr"},{"g":"10 / م-ج","n":"شريط 135%","p":0,"q":0,"s":"wr"},{"g":"2x1.5","n":"كبل 30%","p":0,"q":0,"s":"wr"},{"g":"2x10","n":"كبل مجدول 135%","p":0,"q":0,"s":"wr"},{"g":"2x1","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"2x1.5","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"2x2.5","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"2x4","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"2x6","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"2x10","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"3x1.5","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"3.2.5","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"3x4","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"3x6","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"3x10","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"4x1.5","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"4x2.5","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"4x4","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"4x6","n":"كبل مبروم اسود وأبيض","p":0,"q":0,"s":"wr"},{"g":"2x6","n":"كبل مبروم شعري 30%","p":0,"q":0,"s":"wr"},{"g":"2x10","n":"كبل مبروم شعري 30%","p":0,"q":0,"s":"wr"},{"g":"2x6 100%","n":"كبل مبروم مجدول NYY","p":0,"q":0,"s":"wr"},{"g":"4x6 100%","n":"كبل مبروم مجدول NYY","p":0,"q":0,"s":"wr"},{"g":"4x10 120%","n":"كبل مبروم مجدول NYY","p":0,"q":0,"s":"wr"},{"g":"4x16 160%","n":"كبل مبروم مجدول NYY","p":0,"q":0,"s":"wr"},{"g":"4x10 130%","n":"كبل مبروم مجدول NYY","p":0,"q":0,"s":"wr"},{"g":"4x10 135%","n":"كبل مبروم مجدول NYY","p":0,"q":0,"s":"wr"},{"g":"2x6","n":"كبل مبسط 27%","p":0,"q":0,"s":"wr"},{"g":"2x10","n":"كبل مبسط 27%","p":0,"q":0,"s":"wr"},{"g":"2x16","n":"كبل مبسط 27%","p":0,"q":0,"s":"wr"},{"g":"3x6","n":"كبل مبسط 27%","p":0,"q":0,"s":"wr"},{"g":"3x10","n":"كبل مبسط 27%","p":0,"q":0,"s":"wr"},{"g":"3x16","n":"كبل مبسط 27%","p":0,"q":0,"s":"wr"},{"g":"3x25","n":"كبل مبسط 27%","p":0,"q":0,"s":"wr"},{"g":"3x35","n":"كبل مبسط 27%","p":0,"q":0,"s":"wr"},{"g":"2x6","n":"كبل مبسط 30%","p":0,"q":0,"s":"wr"},{"g":"2x10","n":"كبل مبسط 30%","p":0,"q":0,"s":"wr"},{"g":"3x6","n":"كبل مبسط 30%","p":0,"q":0,"s":"wr"},{"g":"3x10","n":"كبل مبسط 30%","p":0,"q":0,"s":"wr"},{"g":"3x16","n":"كبل مبسط 30%","p":0,"q":0,"s":"wr"},{"g":"3x25","n":"كبل مبسط 30%","p":0,"q":0,"s":"wr"},{"g":"3x35","n":"كبل مبسط 30%","p":0,"q":0,"s":"wr"},{"g":"2x6","n":"كبل مبروم شعري 27% NYY","p":0,"q":0,"s":"wr"},{"g":"2x10","n":"كبل مبروم شعري 27% NYY","p":0,"q":0,"s":"wr"},{"g":"4x10","n":"كبل مبروم شعري 27% NYY","p":0,"q":0,"s":"wr"},{"g":"4x16","n":"كبل مبروم شعري 27% NYY","p":0,"q":0,"s":"wr"},{"g":"2x6","n":"كبل مبروم شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"2x10","n":"كبل مبروم شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"4x10","n":"كبل مبروم شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"4x16","n":"كبل مبروم شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"2x4","n":"كبل مبروم شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"3x4","n":"كبل مبروم شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"3x2.5","n":"كبل مبروم شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"3x6","n":"كبل مبروم شعري 30% NYY","p":0,"q":0,"s":"wr"},{"g":"3x4","n":"كبل طبقة واحدة 30%","p":0,"q":0,"s":"wr"},{"g":"3x2.5","n":"كبل طبقة واحدة 30%","p":0,"q":0,"s":"wr"}],"rate":138.5,"u":1791282835062,"ph":"b5354bc987952c6cb8d464e7bcce11871b69a2a5975a25f17c69362cc4a02d56"}</script>
+<script id="app">
+const $=id=>document.getElementById(id),f=n=>Math.round(n).toLocaleString("en-US");
+const S={cu:["نحاس","كغ"],pl:["البلاستيك (العزل)","كيس"],wr:["الأسلاك والكابلات","متر"]};
+const TYPES=[["شريط مفرد مجدول",7],["شريط مفرد شعري 27%",12],["شريط السحب",3],["شريط مفرد مجدول نظامي",2],["شريط مفرد شعري 30%",8],["شريط مفرد شعري 30% NYY",3],["شريط ميداني (هاتف)",1],["كبل مجدول 100%",1],["كبل مجدول 120%",1],["شريط 135%",1],["كبل 30%",1],["كبل مجدول 135%",1],["كبل مبروم اسود وأبيض",15],["كبل مبروم شعري 30%",2],["كبل مبروم مجدول NYY",6],["كبل مبسط 27%",8],["كبل مبسط 30%",7],["كبل مبروم شعري 27% NYY",4],["كبل مبروم شعري 30% NYY",8],["كبل طبقة واحدة 30%",2]];
+const GA="1.5 / م|2.5 / م|3 / م|4 / م|6 / م|10 / م|16 / م|0.5 / م|0.75 / م|1 / م|1.5 / م|2.5 / م|3 / م|4 / م|6 / م|10 / م|16 / م|25 / م|35 / م|0.5 / م|1 / م|1.5 / م|3 / م|4 / م|1.5 / م|2.5 / م|4 / م|6 / م|10 / م|16 / م|25 / م|35 / م|4 / م|6 / م|10 / م|هاتف|3 x 6|2 x 10|10 / م-ج|2 x 1.5|2 x 10|2 x 1|2 x 1.5|2 x 2.5|2 x 4|2 x 6|2 x 10|3 x 1.5|3 x 2.5|3 x 4|3 x 6|3 x 10|4 x 1.5|4 x 2.5|4 x 4|4 x 6|2 x 6|2 x 10|2 x 6 100%|4 x 6 100%|4 x 10 120%|4 x 16 160%|4 x 10 130%|4 x 10 135%|2 x 6|2 x 10|2 x 16|3 x 6|3 x 10|3 x 16|3 x 25|3 x 35|2 x 6|2 x 10|3 x 6|3 x 10|3 x 16|3 x 25|3 x 35|2 x 6|2 x 10|4 x 10|4 x 16|2 x 6|2 x 10|4 x 10|4 x 16|2 x 4|3 x 4|3 x 2.5|3 x 6|3 x 4|3 x 2.5".split("|").map(g=>g.replace(/\s*\/\s*م$/,""));
+const def=()=>({rate:138.5,cu:14.36,bag:25,hist:[],items:[
+{s:"cu",n:"نحاس كاثود",q:0,p:0},{s:"cu",n:"نحاس مسحوب",q:0,p:0},
+{s:"pl",n:"PVC أسود",q:0,p:0},{s:"pl",n:"PVC أحمر",q:0,p:0},{s:"pl",n:"PVC أزرق",q:0,p:0},{s:"pl",n:"PVC أصفر/أخضر",q:0,p:0},
+...TYPES.flatMap(t=>Array.from({length:t[1]},(_,i)=>({s:"wr",n:t[0],g:"",q:0,p:0})))].map((it,x,a)=>it)});
+const ST=JSON.parse(document.getElementById("state").textContent);
+let D=ST&&ST.items?JSON.parse(JSON.stringify(ST)):def(),dirty=false,canWrite=false;
+const loadDraft=()=>{try{const dr=JSON.parse(localStorage.getItem("cableDraft"));if(dr&&dr.d&&dr.base===(ST&&ST.u)){D=dr.d;dirty=true}}catch(e){}};
+const H=async v=>{try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("cbl:"+v));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){let h=5381;for(const c of "cbl:"+v)h=((h<<5)+h+c.charCodeAt(0))|0;return "f"+h}};
+(()=>{const w=D.items.filter(i=>i.s=="wr");if(w.length==GA.length&&w.every(i=>!i.g))w.forEach((i,x)=>i.g=GA[x])})();
+const num=v=>parseFloat(String(v).replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[٫,،]/g,".").replace(/[^\d.\-]/g,""));
+function toast(m){const t=$("toast");t.textContent=m;t.style.display="block";clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display="none",3500)}
+function refresh(){document.querySelectorAll("[data-r]").forEach(c=>{const i=D.items[c.dataset.r];if(!i)return;c.textContent=c.classList.contains("vw")?f(i.q*D.bag)+" كغ":c.classList.contains("v1")?f(val(i)):f(val(i)*D.rate)});stats();save()}
+function ask(b,fn){if(b.dataset.s){fn();return}b.dataset.s=1;const o=b.textContent;b.textContent="اضغط للتأكيد";setTimeout(()=>{b.dataset.s="";b.textContent=o},3000)}
+const save=()=>{if(!canWrite)return;dirty=true;try{localStorage.setItem("cableDraft",JSON.stringify({base:ST&&ST.u,d:D}))}catch(e){}bar()};
+const bar=()=>{$("pubst").textContent=dirty?"⚠️ لديك تعديلات لم تُنشر بعد":"✔ كل شيء منشور"};
+function applyRO(){document.body.classList.toggle("ro",!canWrite);
+document.querySelectorAll("#rate,#cu,#bag,#yr,#secs input").forEach(i=>i.disabled=!canWrite);
+$("pubbar").style.display=canWrite?"flex":"none";$("lock").style.display=canWrite?"none":"flex";
+$("bd").textContent=canWrite?"✏️ وضع التعديل: عدّل ما تشاء ثم اضغط «تنزيل النسخة المحدّثة» وارفع الملف على الاستضافة ليراه الجميع":"👁 عرض فقط";
+$("upd").textContent=D.u?"آخر تحديث منشور: "+new Date(D.u).toLocaleString("ar"):""}
+function build(){const d=JSON.parse(JSON.stringify(D));d.u=Date.now();
+const c=document.documentElement.cloneNode(true);
+c.querySelectorAll("script:not(#app):not(#state),link,base").forEach(n=>n.remove());
+c.querySelector("#state").textContent=JSON.stringify(d).replace(/</g,"\\u003c");
+["st","sh","hs","bd","upd","pubst"].forEach(i=>c.querySelector("#"+i).textContent="");
+c.querySelector("#secs").textContent="جارٍ تحميل الجرد…";
+c.querySelector("body").removeAttribute("class");c.querySelector("#pubbar").style.display="none";c.querySelector("#lock").style.display="flex";c.querySelector("#toast").style.display="none";
+return "<!DOCTYPE html>\n"+c.outerHTML}
+const price=i=>i.s=="cu"?D.cu:i.p, val=i=>i.q*price(i);
+const tot=()=>D.items.reduce((a,i)=>a+val(i),0);
+function sections(){$("secs").innerHTML=Object.keys(S).map(k=>{
+const rows=D.items.map((i,x)=>[i,x]).filter(a=>a[0].s==k&&(a[0].n+" "+(a[0].g||"")).includes($("q").value.trim())).map(([i,x])=>`<tr><td>${i.n}</td>${k=="wr"?`<td><input type="text" style="width:80px" placeholder="القياس" data-x="${x}" data-k="g" value="${i.g||""}"></td>`:""}<td><input type="text" inputmode="decimal" data-x="${x}" data-k="q" value="${i.q}"> ${S[k][1]}<div class="mv"><input type="text" inputmode="decimal" step="any" class="dl" placeholder="كمية"><button data-x="${x}" data-p="1">+ إضافة</button><button data-x="${x}" data-p="-1" class="x">− سحب</button></div></td>
+${k=="pl"?`<td class="vw" data-r="${x}">${f(i.q*D.bag)} كغ</td>`:""}<td>${k=="cu"?D.cu.toFixed(2):`<input type="text" inputmode="decimal" step="0.01" data-x="${x}" data-k="p" value="${i.p}">`}</td><td class="v1" data-r="${x}">${f(val(i))}</td><td class="v2" data-r="${x}">${f(val(i)*D.rate)}</td><td><button class="x" data-d="${x}">حذف</button></td></tr>`).join("");
+return `<h2>${S[k][0]}</h2><div class="sc"><table><thead><tr><th>الصنف</th>${k=="wr"?"<th>القياس</th>":""}<th>الكمية الموجودة</th>${k=="pl"?"<th>الوزن</th>":""}<th>سعر ${S[k][1]} $</th><th>القيمة $</th><th>القيمة ل.س</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+<div class="add"><input id="n${k}" placeholder="اسم صنف جديد"><button data-a="${k}">إضافة</button></div>`}).join("")}
+function stats(){const T=tot(),by=k=>D.items.filter(i=>i.s==k),sum=k=>by(k).reduce((a,i)=>a+val(i),0),qs=k=>by(k).reduce((a,i)=>a+i.q,0);
+const top=[...D.items].sort((a,b)=>val(b)-val(a))[0];
+$("st").innerHTML=[["إجمالي القيمة $","$"+f(T)],["إجمالي القيمة ل.س",f(T*D.rate)],["النحاس الموجود",f(qs("cu"))+" كغ"],["البلاستيك",f(qs("pl"))+" كيس ("+f(qs("pl")*D.bag)+" كغ)"],["الأسلاك",f(qs("wr"))+" متر"],["عدد الأصناف",D.items.length],["أعلى صنف قيمة",top?top.n:"-"]].map(a=>`<div class="c"><h3>${a[0]}</h3><div class="big">${a[1]}</div></div>`).join("");
+$("sh").innerHTML=Object.keys(S).map(k=>{const p=T?sum(k)/T*100:0;return `<div class="c"><h3>حصة ${S[k][0]}</h3><div class="big">${p.toFixed(1)}%</div><div class="bar"><i style="width:${p}%"></i></div></div>`}).join("")}
+function hist(){const h=[...D.hist].sort((a,b)=>a.y-b.y);$("hs").innerHTML=h.map((e,i)=>{const d=i?e.t-h[i-1].t:null,pc=i&&h[i-1].t?(d/h[i-1].t*100).toFixed(1):"";
+return `<tr><td>${e.y}</td><td>${f(e.t)}</td><td>${f(e.t*e.r)}</td><td>${d===null?"-":(d>=0?"+":"")+f(d)+(pc?` (${pc}%)`:"")}</td><td><button data-L="${e.y}">استرجاع</button> <button class="x" data-H="${e.y}">حذف</button></td></tr>`}).join("")||`<tr><td colspan="5">لا يوجد جرد محفوظ بعد</td></tr>`}
+function all(ns){$("rate").value=D.rate;$("cu").value=D.cu;$("bag").value=D.bag;$("yr").value=$("yr").value||new Date().getFullYear();sections();stats();hist();applyRO();if(!ns)save()}
+$("rate").onchange=e=>{D.rate=num(e.target.value)||1;all()};$("cu").onchange=e=>{D.cu=num(e.target.value)||0;all()};$("bag").onchange=e=>{D.bag=num(e.target.value)||25;all()};
+$("r1").onclick=()=>{D.rate=138.5;all()};$("r2").onclick=()=>{D.rate=122.5;all()};
+$("secs").addEventListener("change",e=>{const t=e.target;if(t.dataset.x){D.items[t.dataset.x][t.dataset.k]=t.dataset.k=="g"?t.value:(num(t.value)||0);if(t.dataset.k!="g")t.value=D.items[t.dataset.x][t.dataset.k];refresh()}});
+$("secs").addEventListener("click",e=>{const t=e.target;if(t.dataset.d){ask(t,()=>{D.items.splice(t.dataset.d,1);all()})}
+if(t.dataset.p){const dl=t.closest(".mv").querySelector(".dl"),d=num(dl.value);if(!(d>0)){toast("اكتب الكمية في الخانة أولاً");return}
+const it=D.items[t.dataset.x],old=it.q;it.q=Math.max(0,Math.round((it.q+d*t.dataset.p)*1000)/1000);
+document.querySelector('input[data-x="'+t.dataset.x+'"][data-k="q"]').value=it.q;dl.value="";refresh();
+toast((t.dataset.p>0?"تمت إضافة ":"تم سحب ")+d+" من «"+it.n+"»: "+old+" ← "+it.q)}
+if(t.dataset.a){const k=t.dataset.a,n=$("n"+k).value.trim();if(n){D.items.push({s:k,n,q:0,p:0});all()}}});
+$("zero").onclick=e=>ask(e.target,()=>{D.items.forEach(i=>i.q=0);all()});
+$("sv").onclick=()=>{const y=num($("yr").value);if(!y)return;D.hist=D.hist.filter(e=>e.y!=y);D.hist.push({y,t:tot(),r:D.rate,items:JSON.parse(JSON.stringify(D.items)),cu:D.cu});all()};
+$("hs").addEventListener("click",e=>{const t=e.target;if(t.dataset.H)ask(t,()=>{D.hist=D.hist.filter(x=>x.y!=t.dataset.H);all()});
+if(t.dataset.L){const h=D.hist.find(x=>x.y==t.dataset.L);if(h)ask(t,()=>{D.items=JSON.parse(JSON.stringify(h.items));D.cu=h.cu;D.rate=h.r;all()})}});
+$("q").oninput=sections;
+$("pub").onclick=()=>{const h=build(),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([h],{type:"text/html;charset=utf-8"}));a.download="index.html";document.body.appendChild(a);a.click();a.remove();toast("تم تنزيل index.html، ارفعه على الاستضافة ليظهر للجميع")};
+$("unl").onclick=async()=>{const v=$("pin").value.trim();if(!v){toast("اكتب الرمز");return}const h=await H(v);
+let dph;try{dph=JSON.parse(localStorage.getItem("cableDraft")).d.ph}catch(e){}
+const cur=ST.ph||dph,first=!cur;
+if(!first&&h!==ST.ph&&h!==dph){toast("الرمز غير صحيح");return}
+canWrite=true;try{sessionStorage.setItem("cu","1")}catch(e){}loadDraft();$("pin").value="";
+if(first)D.ph=h;all(true);if(first){save();toast("تم تعيين رمز التعديل. نزّل النسخة المحدّثة لتثبيته")}bar()};
+$("chp").onclick=async()=>{const v=prompt("اكتب رمز التعديل الجديد");if(v&&v.trim()){D.ph=await H(v.trim());save();toast("تم تغيير الرمز، نزّل النسخة المحدّثة لتثبيته")}};
+$("out").onclick=()=>{try{sessionStorage.removeItem("cu")}catch(e){}location.reload()};
+(()=>{try{if(sessionStorage.getItem("cu")=="1"){canWrite=true;loadDraft()}}catch(e){}all(true);bar()})();
+</script>
+
+
+</body></html>
