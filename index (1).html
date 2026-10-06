@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>جرد معمل الكابلات</title>
+<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Tahoma,Arial,sans-serif;background:#f6f4ef;color:#1c1b19}@media (prefers-color-scheme:dark){body{background:#17150f;color:#f1ede2}}</style></head>
+<body><p id="m">جارٍ تحميل أحدث نسخة من الجرد…</p>
+<script>
+(async()=>{const m=document.getElementById("m"),base=location.pathname.replace(/[^\/]*$/,""),user=location.hostname.split(".")[0],
+seg=location.pathname.split("/").filter(Boolean)[0],repo=seg&&!/\.html?$/.test(seg)?seg:user+".github.io",re=/^jard-\d{8}-\d{6}\.html$/;
+let names=[];
+try{const r=await fetch("https://api.github.com/repos/"+user+"/"+repo+"/contents/",{cache:"no-store"});
+if(r.ok)names=(await r.json()).map(f=>f.name).filter(n=>re.test(n)).sort().reverse()}catch(e){}
+try{const last=localStorage.getItem("lastJard");if(last&&!names.includes(last))names.push(last)}catch(e){}
+for(const n of names){try{const r=await fetch(base+n,{cache:"no-store"});if(!r.ok)continue;const t=await r.text();
+try{localStorage.setItem("lastJard",n)}catch(e){}
+document.open();document.write(t);document.close();return}catch(e){}}
+m.textContent="تعذّر تحميل الجرد. تأكد من رفع ملف jard-….html ثم أعد المحاولة بعد قليل."})();
+</script></body></html>
